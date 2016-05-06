@@ -78,7 +78,7 @@ if __name__ == '__main__':
                           log_file)
         os.system(map_cmd)
 
-        sam_to_bam_cmd = '%s import ./index/BGI_GeneSet20090523.fa.fai %s %s' % \
+        sam_to_bam_cmd = '%s import ./index/BGIGeneSet2010.fasta.fai %s %s' % \
                          (samtools_path,
                           sam_file,
                           bam_file)
@@ -92,13 +92,13 @@ if __name__ == '__main__':
 
         bam_file = output_file_prefix + '.bam'
 
-        coverage_cmd = '%s -ibam %s -g ./index/BGI_GeneSet20090523.fa.genome > %s' % \
+        coverage_cmd = '%s -ibam %s -g ./index/BGIGeneSet2010.fasta.genome > %s' % \
                        (genome_coverage_bed_path,
                         bam_file,
                         coverage_file)
         os.system(coverage_cmd)
 
-        bp_pos_cmd = 'python %s %s ./index/BGI_GeneSet20090523.fa.genome %s %s' % \
+        bp_pos_cmd = 'python %s %s ./index/BGIGeneSet2010.fasta.genome %s %s' % \
                      (get_cov_bed_hist_path,
                       coverage_file,
                       bp_cov_file,
