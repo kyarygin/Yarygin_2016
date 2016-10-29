@@ -1,6 +1,0 @@
-samtools_path	<samtools path here>
-bowtie_path	<bowtie path here>
-genome_coverage_bed_path	<genomeCoverageBed from BEDTools path here>
-get_cov_bed_hist_path	<get_cov_from_bedtools_hist.py from BEDTools path here>
-blastn_path	blastn
-tblastn_path	tblastn
