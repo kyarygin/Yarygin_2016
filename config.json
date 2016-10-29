@@ -1,0 +1,8 @@
+{
+    "samtools_path": "samtools",
+    "bowtie_path": "bowtie",
+    "genome_coverage_bed_path": "genomeCoverageBed",
+    "get_cov_bed_hist_path": "get_cov_from_bedtools_hist.py",
+    "blastn_path": "blastn",
+    "tblastn_path": "tblastn"
+}
