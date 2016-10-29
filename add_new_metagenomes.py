@@ -113,3 +113,4 @@ if __name__ == '__main__':
                 out.write(bgi_abund[bgi_name])
 
         os.system('rm -r %s' % temp_folder)
+        print(test)
