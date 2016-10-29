@@ -1,5 +1,4 @@
 from __future__ import print_function
-from time import time
 import pandas as pd
 import numpy as np
 import argparse
@@ -38,9 +37,9 @@ def parse_coverage_files(sample_group_folder, group_name, bgi_names):
         sample_bgi_coverage['group_name'] = group_name
         yield sample_bgi_coverage
 
-def create_coverage_file(blast_result_path, BGI_coverage_path, gene_group_name, input_type):
-    bgi_names = pd.read_csv('metadata/BGIGeneSet2010_genes.txt', sep='\t', header=None, names=['bgi_id'])
-    sample_groups = os.listdir(BGI_coverage_path)
+def create_coverage_file(blast_result_path, bgi_coverage_path, gene_group_name, output_folder, input_type, mg_groups):
+    bgi_names_path = os.path.join('metadata', 'BGIGeneSet2010_genes.txt')
+    bgi_names = pd.read_csv(bgi_names_path, sep='\t', header=None, names=['bgi_id'])
 
     blast_result = parse_blast_output(
         blast_filepath=blast_result_path,
@@ -48,13 +47,14 @@ def create_coverage_file(blast_result_path, BGI_coverage_path, gene_group_name, 
     )
 
     headers = ['qseqid', 'sample', 'group_name', 'abund']
-    with open('gene_groups_abund/%s.tsv' % gene_group_name, 'w') as f:
+    gene_group_abund_path = os.path.join(output_folder, '{}.tsv'.format(gene_group_name))
+    with open(gene_group_abund_path, 'w') as f:
         f.write('\t'.join(headers) + '\n')
 
-    for group_name in sample_groups:
+    for group_name in mg_groups:
         print(group_name)
         coverage_files = parse_coverage_files(
-            sample_group_folder=os.path.join(BGI_coverage_path, group_name),
+            sample_group_folder=os.path.join(bgi_coverage_path, group_name),
             group_name=group_name,
             bgi_names=bgi_names
         )
@@ -65,13 +65,13 @@ def create_coverage_file(blast_result_path, BGI_coverage_path, gene_group_name, 
             coverage = coverage.loc[:, ['qseqid', 'sample', 'group_name', 'abund']]
             coverage = coverage.groupby(['qseqid', 'sample', 'group_name']).sum()
             coverage.reset_index(inplace=True)
-            coverage.to_csv('gene_groups_abund/%s.tsv' % gene_group_name,
-                                  sep='\t', mode='a',
-                                  header=False, index=False)
+            coverage.to_csv(gene_group_abund_path,
+                            sep='\t', mode='a',
+                            header=False, index=False)
 
 def blast(input_file, input_type, gene_group_name, n_threads, config_pathes, blastdb_path):
     if not os.path.isfile(input_file):
-        print("Error: file %s doesn't exist" % input_file)
+        print('Error: file {} doesn\'t exist'.format(input_file))
         sys.exit()
 
     if (input_type == 'prot'):
@@ -79,46 +79,75 @@ def blast(input_file, input_type, gene_group_name, n_threads, config_pathes, bla
     elif (input_type == 'nucl'):
         blast_type = config_pathes['blastn_path']
     else:
-        print('Error: incorrect input type: %s' % input_type)
+        print('Error: incorrect input type: {}'.format(input_type))
         sys.exit()
 
-    blast_result_path = 'BLAST_result_%s.txt' % gene_group_name
-    cmd = "%s -num_threads %d -db %s -query %s -out %s -evalue 1e-5 -outfmt '6 qseqid qlen sseqid slen pident length mismatch gapopen qstart qend sstart send evalue bitscore'" % (blast_type, n_threads, blastdb_path, input_file, blast_result_path)
+    blast_result_path = os.path.join('blast_results', 'BLAST_result_{}.txt'.format(gene_group_name))
+    outfmt = '\'6 qseqid qlen sseqid slen pident length mismatch gapopen qstart qend sstart send evalue bitscore\''
+    cmd = '{blast_type} -num_threads {n_threads} -db {blastdb_path} -query {input_file} -out {blast_result_path} -evalue 1e-5 -outfmt {outfmt}'.format(
+        blast_type=blast_type,
+        n_threads=n_threads,
+        blastdb_path=blastdb_path,
+        input_file=input_file,
+        blast_result_path=blast_result_path,
+        outfmt=outfmt
+    )
     os.system(cmd)
-
-    with open('metadata/gene_groups_types.txt', 'a') as f:
-        f.write('%s\t%s\n' % (gene_group_name, input_type))
 
     return blast_result_path
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+def parse_arguments():
+    available_groups = set(os.listdir('BGI_coverage'))
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('input_file', type=str,
-                        help='input fasta file')
-    parser.add_argument('-n', '--n_threads', type=int,
-                        help='number of BLAST threads (default: 1)', default=1)
+                        help='ath to input fasta file')
     parser.add_argument('input_type', type=str,
                         help='type of fasta file (prot/nucl)')
-    parser.add_argument('gene_group_name', type=str,
-                        help='name of gene group')
-    parser.add_argument('output_file', type=str,
-                        help='output tsv file')
-    parser.add_argument('blastdb_path', type=str,
-                        help='path to BGI blastdb')
-    parser.add_argument('BGI_coverage_path', type=str,
-                        help='path to metagenome coverage')
+    parser.add_argument('-o', '--output-folder', type=str, default='.',
+                        help='path to output folder (default: current dir)')
+    parser.add_argument('-n', '--n-threads', type=int,
+                        help='number of BLAST threads (default: 1)', default=1)
+    mg_help = ['select metagenomic groups',
+               'available: {}'.format(', '.join('\'{}\''.format(group_name) for group_name in available_groups)),
+               'default: all']
+    parser.add_argument('-mg', '--metagenomic-group', nargs='+',
+                        default=available_groups,
+                        help='\n'.join(mg_help))
     args = vars(parser.parse_args())
 
-    with open('config') as config:
-        config_pathes = dict([line.strip().split('\t') for line in config.readlines()])
+    if not os.path.exists(args['input_file']):
+        raise Exception('Input file doesn\'t exist')
 
-    input_file = args['input_file']
+    if not os.path.exists(args['output_folder']) or not os.path.isdir(args['output_folder']):
+        raise Exception('Output file folder doesn\'t exist')
+
+    if args['input_type'] not in {'prot', 'nucl'}:
+        raise Exception('Invalid input type: {}'.format(args['input_type']))
+
+    if args['n_threads'] <= 0:
+        raise Exception('Invalid number of threads: {}'.format(args['n_threads']))
+
+    wrong_groups = [group_name for group_name in args['metagenomic_group'] if group_name not in available_groups]
+    if wrong_groups:
+        raise Exception('Invalid metagenomic groups: {}'.format(', '.join(wrong_groups)))
+
+    return args
+
+if __name__ == '__main__':
+    args = parse_arguments()
+    mg_groups = args['metagenomic_group']
     input_type = args['input_type']
-    output_file = args['output_file']
+    input_file = args['input_file']
+    output_folder = args['output_folder']
     n_threads = args['n_threads']
-    gene_group_name = args['gene_group_name']
-    blastdb_path = args['blastdb_path']
-    BGI_coverage_path = args['BGI_coverage_path']
+
+    gene_group_name = os.path.splitext(os.path.basename(input_file))[0]
+
+    blastdb_path = os.path.join('BGI_blastdb', 'BGIGeneSet2010')
+    bgi_coverage_path = 'BGI_coverage'
+
+    with open('config.json') as f:
+        config_pathes = eval(''.join(f.readlines()))
 
     blast_result_path = blast(
         input_file=input_file,
@@ -131,9 +160,11 @@ if __name__ == '__main__':
 
     create_coverage_file(
         blast_result_path=blast_result_path,
-        BGI_coverage_path=BGI_coverage_path,
+        bgi_coverage_path=bgi_coverage_path,
         gene_group_name=gene_group_name,
-        input_type=input_type
+        output_folder=output_folder,
+        input_type=input_type,
+        mg_groups=mg_groups
     )
 
 
