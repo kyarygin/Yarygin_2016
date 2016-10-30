@@ -1,4 +1,3 @@
-from __future__ import print_function
 import pandas as pd
 import numpy as np
 import argparse
@@ -52,7 +51,7 @@ def create_coverage_file(blast_result_path, bgi_coverage_path, gene_group_name, 
         f.write('\t'.join(headers) + '\n')
 
     for group_name in mg_groups:
-        print(group_name)
+        sys.stdout.write(group_name + '\n')
         coverage_files = parse_coverage_files(
             sample_group_folder=os.path.join(bgi_coverage_path, group_name),
             group_name=group_name,
@@ -71,7 +70,7 @@ def create_coverage_file(blast_result_path, bgi_coverage_path, gene_group_name, 
 
 def blast(input_file, input_type, gene_group_name, n_threads, config_pathes, blastdb_path):
     if not os.path.isfile(input_file):
-        print('Error: file {} doesn\'t exist'.format(input_file))
+        sys.stdout.write('Error: file {} doesn\'t exist\n'.format(input_file))
         sys.exit()
 
     if (input_type == 'prot'):
@@ -79,7 +78,7 @@ def blast(input_file, input_type, gene_group_name, n_threads, config_pathes, bla
     elif (input_type == 'nucl'):
         blast_type = config_pathes['blastn_path']
     else:
-        print('Error: incorrect input type: {}'.format(input_type))
+        sys.stdout.write('Error: incorrect input type: {}\n'.format(input_type))
         sys.exit()
 
     blast_result_path = os.path.join('blast_results', 'BLAST_result_{}.txt'.format(gene_group_name))
@@ -149,6 +148,7 @@ if __name__ == '__main__':
     with open('config.json') as f:
         config_pathes = eval(''.join(f.readlines()))
 
+    sys.stdout.write('Running BLAST ... \n')
     blast_result_path = blast(
         input_file=input_file,
         input_type=input_type,
@@ -158,6 +158,7 @@ if __name__ == '__main__':
         blastdb_path=blastdb_path
     )
 
+    sys.stdout.write('Creating coverage file ... \n')
     create_coverage_file(
         blast_result_path=blast_result_path,
         bgi_coverage_path=bgi_coverage_path,
