@@ -9,6 +9,7 @@ def delete_folder(top):
             os.remove(os.path.join(root, name))
         for name in dirs:
             os.rmdir(os.path.join(root, name))
+    os.rmdir(top)
 
 if __name__ == '__main__':
 
