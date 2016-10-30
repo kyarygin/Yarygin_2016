@@ -41,10 +41,11 @@ if __name__ == '__main__':
         bgi_names = [name.strip() for name in f]
 
 
-    for reads_path in read_files[:]:
-
+    for reads_path in read_files:
         basename = os.path.basename(reads_path)
         name, ext = os.path.splitext(basename)
+
+        sys.stdout.write('Processing {} ... \n'.format(basename))
 
         temp_folder = 'temp_{}'.format(name)
         os.mkdir(temp_folder)
@@ -71,6 +72,7 @@ if __name__ == '__main__':
         bgi_fai_file = os.path.join('index', 'BGIGeneSet2010.fasta.fai')
         bgi_genome_file = os.path.join('index', 'BGIGeneSet2010.fasta.genome')
 
+        sys.stdout.write('Mapping on catalog ... \n')
         map_cmd = '{bowtie_path} {key} -S -t -v 3 -k 1 --threads {n_threads} {index_path} {reads_path} {sam_file} 2>{log_file}'.format(
             bowtie_path=bowtie_path,
             key=key,
@@ -82,6 +84,7 @@ if __name__ == '__main__':
         )
         os.system(map_cmd)
 
+        sys.stdout.write('Processing .sam file ... \n')
         sam_to_bam_cmd = '{samtools_path} import {bgi_fai_file} {sam_file} {bam_file}'.format(
             samtools_path=samtools_path,
             bgi_fai_file=bgi_fai_file,
@@ -99,6 +102,7 @@ if __name__ == '__main__':
 
         bam_file = output_file_prefix + '.bam'
 
+        sys.stdout.write('Calculating coverage ... \n')
         coverage_cmd = '{genome_coverage_bed_path} -ibam {bam_file} -g {bgi_genome_file} > {coverage_file}'.format(
             genome_coverage_bed_path=genome_coverage_bed_path,
             bam_file=bam_file,
