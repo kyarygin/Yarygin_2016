@@ -20,4 +20,4 @@ You can specify metagenome groups with `-mg` or `--metagenomic-group` keys. Fow 
 ```
 $ python get_genes_abund.py genes.fasta nucl -mg USA RUS DEN_control
 ```
-You cas see all available metagenome groups executing `python get_genes_abund.py -h`. By default all metagenome groups stated in article are available.
+You can see all available metagenome groups executing `python get_genes_abund.py -h`. By default all metagenome groups stated in article are available.
