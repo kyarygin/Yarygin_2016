@@ -51,7 +51,6 @@ def create_coverage_file(blast_result_path, bgi_coverage_path, gene_group_name, 
         f.write('\t'.join(headers) + '\n')
 
     for group_name in mg_groups:
-        sys.stdout.write(group_name + '\n')
         coverage_files = parse_coverage_files(
             sample_group_folder=os.path.join(bgi_coverage_path, group_name),
             group_name=group_name,
