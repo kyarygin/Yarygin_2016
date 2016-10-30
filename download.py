@@ -14,7 +14,8 @@ filename2id = {
     'BGI_coverage.zip': '0Byeru5YHfXc-QVJFNWZycEJmWEE',
     'blast_results.zip': '0Byeru5YHfXc-ME5KbVYwVlNzX1k',
     'gene_groups_abund.zip': '0Byeru5YHfXc-enlvU1pycmJ4c1E',
-    'index.zip': '0Byeru5YHfXc-anQwODlXcU5nTGc'
+    'index.zip': '0Byeru5YHfXc-anQwODlXcU5nTGc',
+    'metadata.zip': '0Byeru5YHfXc-NFJQRVItUWFJU1k'
 }
 
 filename2size = {
