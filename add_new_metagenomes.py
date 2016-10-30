@@ -34,11 +34,6 @@ if __name__ == '__main__':
     read_files = args['read_file']
     n_threads =  args['n_threads']
 
-    print group_name
-    print read_files
-    print n_threads
-
-
     os.mkdir(os.path.join('BGI_coverage', group_name))
 
     bgi_names_path = os.path.join('metadata', 'BGIGeneSet2010_genes.txt')
