@@ -24,6 +24,7 @@ filename2size = {
     'blast_results.zip': 427363616,
     'gene_groups_abund.zip': 50421398,
     'index.zip': 5325757165,
+    'metadata.zip': 34715942
 }
 
 def human_readable(size):
