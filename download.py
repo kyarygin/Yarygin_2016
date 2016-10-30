@@ -1,6 +1,13 @@
-from __future__ import print_function
+from zipfile import ZipFile
 import requests
 import sys
+import os
+
+try:
+    input_ = raw_input
+except NameError:
+    input_ = input
+
 
 filename2id = {
     'BGI_blastdb.zip': '0Byeru5YHfXc-R1lPWVlPd19vYnM',
@@ -59,10 +66,22 @@ def save_response_content(response, filename):
                 )
                 sys.stdout.write(msg)
                 sys.stdout.flush()
-    print()
+    sys.stdout.write('\n')
+
+def zip_extract(filename):
+    sys.stdout.write('Extracting {} ... '.format(filename))
+    sys.stdout.flush()
+    z_file = ZipFile(filename)
+    z_file.extractall()
+    sys.stdout.write('Done\n')
+    os.remove(filename)
 
 if __name__ == '__main__':
-    file_id = '0Byeru5YHfXc-enlvU1pycmJ4c1E'
-    filename = 'gene_groups_abund.zip'
-    download_file_from_google_drive(file_id, filename)
+    sys.stdout.write('This script will download {} on your computer, continue? [Y/n]\n'.format(human_readable(sum(filename2size.values()))))
+    resp = input_()
+    if resp not in set(['Y', 'y', 'Yes', 'yes', '']):
+        sys.exit()
+    for filename, file_id in filename2id.items():
+        download_file_from_google_drive(file_id, filename)
+        zip_extract(filename)
 
