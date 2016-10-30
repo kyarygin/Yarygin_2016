@@ -10,11 +10,13 @@ Pipeline relies on **blastn**, **tblastn**, **bowtie**, **samtools** and **genom
 
 Download or clone files from repository and run script `download.py` with python. This will download all required metadata for pipeline usage.
 
+### Add new metagenomes
 Metadata contains precomputed abundances for metagenome groups stated in article. To add new group you need to run `get_genes_abund.py`:
 ```
 $ python add_new_metagenomes.py group_name sample_1.fastq sample_2.fastq sample_3.fastq
 ```
 
+### Calculate gene abundances
 To get abundances of your gene group run
 ```
 $ python get_genes_abund.py genes.fasta nucl
