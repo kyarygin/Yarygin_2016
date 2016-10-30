@@ -1,3 +1,4 @@
+from __future__ import print_function
 import requests
 import sys
 
@@ -8,6 +9,7 @@ filename2id = {
     'gene_groups_abund.zip': '0Byeru5YHfXc-enlvU1pycmJ4c1E',
     'index.zip': '0Byeru5YHfXc-anQwODlXcU5nTGc'
 }
+
 filename2size = {
     'BGI_blastdb.zip': 694118894,
     'BGI_coverage.zip': 1040855156,
@@ -51,12 +53,13 @@ def save_response_content(response, filename):
             if chunk:
                 f.write(chunk)
                 downloaded_size += CHUNK_SIZE
-                msg = 'Downloading {}: {} / {}   \r'.format(filename,
-                                                            human_readable(downloaded_size),
-                                                            human_readable(filename2size[filename]))
+                msg = 'Downloading {}: {} / {}     \r'.format(filename,
+                    human_readable(downloaded_size),
+                    human_readable(filename2size[filename])
+                )
                 sys.stdout.write(msg)
                 sys.stdout.flush()
-    print
+    print()
 
 if __name__ == '__main__':
     file_id = '0Byeru5YHfXc-enlvU1pycmJ4c1E'
