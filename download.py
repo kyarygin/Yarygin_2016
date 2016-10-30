@@ -1,6 +1,29 @@
 import requests
+import sys
 
-def download_file_from_google_drive(id, destination):
+filename2id = {
+    'BGI_blastdb.zip': '0Byeru5YHfXc-R1lPWVlPd19vYnM',
+    'BGI_coverage.zip': '0Byeru5YHfXc-QVJFNWZycEJmWEE',
+    'blast_results.zip': '0Byeru5YHfXc-ME5KbVYwVlNzX1k',
+    'gene_groups_abund.zip': '0Byeru5YHfXc-enlvU1pycmJ4c1E',
+    'index.zip': '0Byeru5YHfXc-anQwODlXcU5nTGc'
+}
+filename2size = {
+    'BGI_blastdb.zip': 694118894,
+    'BGI_coverage.zip': 1040855156,
+    'blast_results.zip': 427363616,
+    'gene_groups_abund.zip': 50421398,
+    'index.zip': 5325757165,
+}
+
+def human_readable(size):
+    for unit in ['', 'K', 'M', 'G', 'T']:
+        if abs(size) < 1024.:
+            return '{:3.1f}{}'.format(size, unit)
+        size /= 1024.
+    return '{:.1f}{}'.format(size, unit)
+
+def download_file_from_google_drive(id, filename):
     url = 'https://docs.google.com/uc?export=download'
 
     session = requests.Session()
@@ -12,7 +35,7 @@ def download_file_from_google_drive(id, destination):
         params = {'id': id, 'confirm': token}
         response = session.get(url, params=params, stream=True)
 
-    save_response_content(response, destination)
+    save_response_content(response, filename)
 
 def get_confirm_token(response):
     for key, value in response.cookies.items():
@@ -20,26 +43,23 @@ def get_confirm_token(response):
             return value
     return None
 
-def save_response_content(response, destination):
+def save_response_content(response, filename):
     CHUNK_SIZE = 1024 * 32
-    with open(destination, 'wb') as f:
+    downloaded_size = 0
+    with open(filename, 'wb') as f:
         for chunk in response.iter_content(CHUNK_SIZE):
             if chunk:
                 f.write(chunk)
+                downloaded_size += CHUNK_SIZE
+                msg = 'Downloading {}: {} / {}   \r'.format(filename,
+                                                            human_readable(downloaded_size),
+                                                            human_readable(filename2size[filename]))
+                sys.stdout.write(msg)
+                sys.stdout.flush()
+    print
 
 if __name__ == '__main__':
     file_id = '0Byeru5YHfXc-enlvU1pycmJ4c1E'
-    destination = './gene_groups_abund.zip'
-    download_file_from_google_drive(file_id, destination)
-
-filename2id = {
-    'BGI_blastdb.zip': '0Byeru5YHfXc-R1lPWVlPd19vYnM',
-    'BGI_coverage.zip': '0Byeru5YHfXc-QVJFNWZycEJmWEE',
-    'blast_results.zip': '0Byeru5YHfXc-ME5KbVYwVlNzX1k',
-    'gene_groups_abund.zip': '0Byeru5YHfXc-enlvU1pycmJ4c1E',
-    'index.zip': '0Byeru5YHfXc-anQwODlXcU5nTGc'
-}
-
-
-
+    filename = 'gene_groups_abund.zip'
+    download_file_from_google_drive(file_id, filename)
 
