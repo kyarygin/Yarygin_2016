@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse
 import sys
 import os
@@ -16,8 +17,8 @@ if __name__ == '__main__':
 
     samtools_path = config_pathes['samtools_path']
     bowtie_path = config_pathes['bowtie_path']
-    genome_coverage_bed_path = config_pathes['genome_coverage_bed_path']
     get_cov_bed_hist_path = config_pathes['get_cov_bed_hist_path']
+    genome_coverage_bed_path = 'get_cov_from_bedtools_hist.py'
 
 
     parser = argparse.ArgumentParser()
