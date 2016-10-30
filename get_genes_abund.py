@@ -99,7 +99,7 @@ def parse_arguments():
     available_groups = set(os.listdir('BGI_coverage'))
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('input_file', type=str,
-                        help='ath to input fasta file')
+                        help='path to input fasta file')
     parser.add_argument('input_type', type=str,
                         help='type of fasta file (prot/nucl)')
     parser.add_argument('-o', '--output-folder', type=str, default='.',
