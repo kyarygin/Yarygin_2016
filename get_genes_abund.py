@@ -166,5 +166,3 @@ if __name__ == '__main__':
         input_type=input_type,
         mg_groups=mg_groups
     )
-
-
