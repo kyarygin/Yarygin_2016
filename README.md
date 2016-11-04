@@ -18,11 +18,11 @@ To get abundances of your gene group run
 ```
 $ python get_genes_abund.py genes.fasta nucl
 ```
-You can specify groups of metagenomes with `-mg` or `--metagenomic-group` keys. Fow example:
+You can specify groups of metagenomes with `-mg` or `--metagen-group` keys. Fow example:
 ```
 $ python get_genes_abund.py genes.fasta nucl -mg USA RUS DEN_control
 ```
-You can see all available metagenome groups executing `python get_genes_abund.py -h`. By default all metagenome groups stated in article are available.
+You can see all available metagenome groups executing `python get_genes_abund.py -h`. By default all groups of metagenomes stated in article are available.
 
 # Other
 * `fasta` folder contains all genes used in study in fasta-format
@@ -36,7 +36,7 @@ $ python add_new_metagenomes.py [-h] [-n N_THREADS]
                                 group_name read_file [read_file ...]
 
 positional arguments:
-  group_name            matagenomes group name
+  group_name            name of new group of metagenomes
   read_file             read files
 
 optional arguments:
@@ -48,7 +48,7 @@ optional arguments:
 **get_genes_abund.py**
 ```
 $ python get_genes_abund.py [-h] [-o OUTPUT_FOLDER] [-n N_THREADS]
-                            [-mg METAGENOMIC_GROUP [METAGENOMIC_GROUP ...]]
+                            [-mg METAGEN_GROUP [METAGEN_GROUP ...]]
                             input_file input_type
 
 positional arguments:
@@ -61,8 +61,8 @@ optional arguments:
                         path to output folder (default: current dir)
   -n N_THREADS, --n-threads N_THREADS
                         number of BLAST threads (default: 1)
-  -mg METAGENOMIC_GROUP [METAGENOMIC_GROUP ...], --metagenomic-group METAGENOMIC_GROUP [METAGENOMIC_GROUP ...]
-                        select metagenomic groups
+  -mg METAGEN_GROUP [METAGEN_GROUP ...], --metagen-group METAGEN_GROUP [METAGEN_GROUP ...]
+                        select groups of metagenomes
                         available: 'USA', 'CHI', 'SPN_CD', 'SPN_control', 'DEN_obese', 'DEN_control', 'RUS_plus', 'RUS', 'SPN_UC'
                         default: all
 
