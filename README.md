@@ -24,6 +24,11 @@ $ python get_genes_abund.py genes.fasta nucl -mg USA RUS DEN_control
 ```
 You can see all available metagenome groups executing `python get_genes_abund.py -h`. By default all metagenome groups stated in article are available.
 
+# Other
+* `fasta` folder contains all genes used in study in fasta-format
+* `gene_groups_abund` folder contains gene abundance tables for all gene groups in all samples used in study. Each file fontains abundace of one gene group in all metagenomes. Table consist of four columns - gene name, metagenome name, group of metagenomes name and relative abundance value.
+* Run `python get_genes_abund.py -h` and `python add_new_metagenomes.py -h` to get usage help
+
 # Script usage
 
 ```
@@ -61,8 +66,3 @@ optional arguments:
                         default: all
 
 ```
-
-# Other
-* `fasta` folder contains all genes used in study in fasta-format
-* `gene_groups_abund` folder contains gene abundance tables for all gene groups in all samples used in study
-* Run `python get_genes_abund.py -h` and `python add_new_metagenomes.py -h` to get usage help
