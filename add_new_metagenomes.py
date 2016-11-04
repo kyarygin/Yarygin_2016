@@ -26,9 +26,9 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--n_threads', type=int,
                         help='number of bowtie threads (default: 20)', default=20)
     parser.add_argument('group_name', type=str,
-                        help='matagenomes group name')
+                        help='name of new group of metagenomes')
     parser.add_argument('read_file', metavar='read_file', type=str, nargs='+',
-                        help='read files')
+                        help='path to read files')
     args = vars(parser.parse_args())
 
     group_name = args['group_name']

@@ -105,10 +105,10 @@ def parse_arguments():
                         help='path to output folder (default: current dir)')
     parser.add_argument('-n', '--n-threads', type=int,
                         help='number of BLAST threads (default: 1)', default=1)
-    mg_help = ['select metagenomic groups',
+    mg_help = ['select groups of metagenomes',
                'available: {}'.format(', '.join('\'{}\''.format(group_name) for group_name in available_groups)),
                'default: all']
-    parser.add_argument('-mg', '--metagenomic-group', nargs='+',
+    parser.add_argument('-mg', '--metagen-group', nargs='+',
                         default=available_groups,
                         help='\n'.join(mg_help))
     args = vars(parser.parse_args())
@@ -125,15 +125,15 @@ def parse_arguments():
     if args['n_threads'] <= 0:
         raise Exception('Invalid number of threads: {}'.format(args['n_threads']))
 
-    wrong_groups = [group_name for group_name in args['metagenomic_group'] if group_name not in available_groups]
+    wrong_groups = [group_name for group_name in args['metagen_group'] if group_name not in available_groups]
     if wrong_groups:
-        raise Exception('Invalid metagenomic groups: {}'.format(', '.join(wrong_groups)))
+        raise Exception('Invalid groups of metagenomes: {}'.format(', '.join(wrong_groups)))
 
     return args
 
 if __name__ == '__main__':
     args = parse_arguments()
-    mg_groups = args['metagenomic_group']
+    mg_groups = args['metagen_group']
     input_type = args['input_type']
     input_file = args['input_file']
     output_folder = args['output_folder']
