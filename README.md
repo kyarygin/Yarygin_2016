@@ -30,7 +30,7 @@ You can see all available metagenome groups executing `python get_genes_abund.py
 * Run `python get_genes_abund.py -h` and `python add_new_metagenomes.py -h` to get usage help
 
 # Script usage
-
+**add_new_metagenomes.py**
 ```
 $ python add_new_metagenomes.py [-h] [-n N_THREADS]
                                 group_name read_file [read_file ...]
@@ -45,6 +45,7 @@ optional arguments:
                         number of bowtie threads (default: 20)
 
 ```
+**get_genes_abund.py**
 ```
 $ python get_genes_abund.py [-h] [-o OUTPUT_FOLDER] [-n N_THREADS]
                             [-mg METAGENOMIC_GROUP [METAGENOMIC_GROUP ...]]
