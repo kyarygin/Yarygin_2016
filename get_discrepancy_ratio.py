@@ -110,6 +110,8 @@ def parse_arguments():
                         help='number of bowtie threads (default: 20)', default=20)
     parser.add_argument('-o', '--output-folder', type=str, default='.',
                         help='path to output folder (default: current dir)')
+    parser.add_argument('-bt2', action='store_true',
+                        help='use bowtie2 instead of bowtie')
 
     args = vars(parser.parse_args())
 

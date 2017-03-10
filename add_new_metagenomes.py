@@ -29,6 +29,8 @@ if __name__ == '__main__':
                         help='name of new group of metagenomes')
     parser.add_argument('read_file', metavar='read_file', type=str, nargs='+',
                         help='path to read files')
+    parser.add_argument('-bt2', action='store_true',
+                        help='use bowtie2 instead of bowtie')
     args = vars(parser.parse_args())
 
     group_name = args['group_name']
