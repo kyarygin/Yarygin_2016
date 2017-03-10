@@ -24,7 +24,7 @@ $ python get_genes_abund.py genes.fasta nucl -mg USA RUS DEN_control
 ```
 You can see all available metagenome groups executing `python get_genes_abund.py -h`. By default all groups of metagenomes stated in article are available.
 
-#### Calculate gene abundances
+#### Calculate discrepancy ratios
 To get discrepancy ratio of your gene group run
 ```
 $ python get_discrepancy_ratio.py genes.fasta sample_1.fastq sample_2.fastq sample_3.fastq
