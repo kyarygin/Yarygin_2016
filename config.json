@@ -3,5 +3,6 @@
     "bowtie_path": "bowtie",
     "genome_coverage_bed_path": "genomeCoverageBed",
     "blastn_path": "blastn",
-    "tblastn_path": "tblastn"
+    "tblastn_path": "tblastn",
+    "bowtie-build_path": "bowtie-build"
 }
