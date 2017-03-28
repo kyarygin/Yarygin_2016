@@ -23,7 +23,7 @@ def build_index(input_fasta_path, bowtie_build_path):
     os.system(build_cmd)
     return index_path
 
-def map_to_bgi(reads_path, bowtie_path, n_threads):
+def map_to_bgi(reads_path, bowtie_path, n_threads, bt2):
     name, ext = os.path.splitext(os.path.basename(reads_path))
 
     if ext == '.fq' or ext == '.fastq':
@@ -33,7 +33,9 @@ def map_to_bgi(reads_path, bowtie_path, n_threads):
     else:
         key = '-f'
 
-    if ext == 'csfasta':
+    if bt2:
+        index_path = os.path.join('index', 'BGIGeneSet2010_bt2')
+    elif ext == 'csfasta':
         index_path = os.path.join('index', 'BGIGeneSet2010_color')
     else:
         index_path = os.path.join('index', 'BGIGeneSet2010')
@@ -42,16 +44,27 @@ def map_to_bgi(reads_path, bowtie_path, n_threads):
     log_file = os.path.join('temp', 'logs', '{}.bgi_mapping.log'.format(name))
     unmapped_fasta = os.path.join('temp', 'unmapped', '{}.unmapped{}'.format(name, ext))
 
-    map_cmd = '{bowtie_path} {key} -S -t -v 3 -k 1 --threads {n_threads} --un {unmapped_fasta} {index_path} {reads_path} {sam_file} 2>{log_file}'.format(
-        bowtie_path=bowtie_path,
-        key=key,
-        n_threads=n_threads,
-        unmapped_fasta=unmapped_fasta,
-        index_path=index_path,
-        reads_path=reads_path,
-        sam_file=sam_file,
-        log_file=log_file
-    )
+    if bt2:
+        map_cmd = '{bowtie_path} -x {index_path} -U {reads_path} -S {sam_file} -k 1 -p {n_threads} --un {unmapped_fasta} 2>{log_file}'.format(
+            bowtie_path=bowtie_path,
+            index_path=index_path,
+            reads_path=reads_path,
+            sam_file=sam_file,
+            n_threads=n_threads,
+            unmapped_fasta=unmapped_fasta,
+            log_file=log_file
+        )
+    else:
+        map_cmd = '{bowtie_path} {key} -S -t -v 3 -k 1 --threads {n_threads} --un {unmapped_fasta} {index_path} {reads_path} {sam_file} 2>{log_file}'.format(
+            bowtie_path=bowtie_path,
+            key=key,
+            n_threads=n_threads,
+            unmapped_fasta=unmapped_fasta,
+            index_path=index_path,
+            reads_path=reads_path,
+            sam_file=sam_file,
+            log_file=log_file
+        )
     os.system(map_cmd)
 
 def map_to_raw(reads_path, index_path, bowtie_path, n_threads):
@@ -68,15 +81,25 @@ def map_to_raw(reads_path, index_path, bowtie_path, n_threads):
     else:
         key = '-f'
 
-    map_cmd = '{bowtie_path} {key} -S -t -v 3 -k 1 --threads {n_threads} {index_path} {reads_path} {sam_file} 2>{log_file}'.format(
-        bowtie_path=bowtie_path,
-        key=key,
-        n_threads=n_threads,
-        index_path=index_path,
-        reads_path=unmapped_fasta,
-        sam_file=sam_file,
-        log_file=log_file
-    )
+    if bt2:
+        map_cmd = '{bowtie_path} -x {index_path} -U {reads_path} -S {sam_file} -k 1 -p {n_threads} --no-unal 2>{log_file}'.format(
+            bowtie_path=bowtie_path,
+            index_path=index_path,
+            reads_path=unmapped_fasta,
+            sam_file=sam_file,
+            n_threads=n_threads,
+            log_file=log_file
+        )
+    else:
+        map_cmd = '{bowtie_path} {key} -S -t -v 3 -k 1 --threads {n_threads} {index_path} {reads_path} {sam_file} 2>{log_file}'.format(
+            bowtie_path=bowtie_path,
+            key=key,
+            n_threads=n_threads,
+            index_path=index_path,
+            reads_path=unmapped_fasta,
+            sam_file=sam_file,
+            log_file=log_file
+        )
     os.system(map_cmd)
 
 def calc_discrepancy_ratio(reads_path):
@@ -114,6 +137,7 @@ def parse_arguments():
                         help='use bowtie2 instead of bowtie')
 
     args = vars(parser.parse_args())
+    bt2 = args['bt2']
 
     if not os.path.exists(args['gene_group_file']):
         raise Exception('Input file doesn\'t exist')
@@ -153,11 +177,13 @@ if __name__ == '__main__':
     for read_file in read_files:
         map_to_bgi(reads_path=read_file,
                    bowtie_path=config_pathes['bowtie_path'],
-                   n_threads=n_threads)
+                   n_threads=n_threads,
+                   bt2=bt2)
         map_to_raw(reads_path=read_file,
                    index_path=index_path,
                    bowtie_path=config_pathes['bowtie_path'],
-                   n_threads=n_threads)
+                   n_threads=n_threads,
+                   bt2=bt2)
         discrepancy_ratio = calc_discrepancy_ratio(read_file)
         with open(output_file, 'a') as f:
             f.write('{},{}\n'.format(read_file, discrepancy_ratio))
