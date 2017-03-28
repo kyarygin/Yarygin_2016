@@ -36,6 +36,7 @@ if __name__ == '__main__':
     group_name = args['group_name']
     read_files = args['read_file']
     n_threads =  args['n_threads']
+    bt2 = args['bt2']
 
     os.mkdir(os.path.join('BGI_coverage', group_name))
 
@@ -60,7 +61,9 @@ if __name__ == '__main__':
         else:
             key = '-f'
 
-        if ext == 'csfasta':
+        if bt2:
+            index_path = os.path.join('index', 'BGIGeneSet2010_bt2')
+        elif ext == 'csfasta':
             index_path = os.path.join('index', 'BGIGeneSet2010_color')
         else:
             index_path = os.path.join('index', 'BGIGeneSet2010')
@@ -76,15 +79,25 @@ if __name__ == '__main__':
         bgi_genome_file = os.path.join('index', 'BGIGeneSet2010.fasta.genome')
 
         sys.stdout.write('Mapping on catalog ... \n')
-        map_cmd = '{bowtie_path} {key} -S -t -v 3 -k 1 --threads {n_threads} {index_path} {reads_path} {sam_file} 2>{log_file}'.format(
-            bowtie_path=bowtie_path,
-            key=key,
-            n_threads=n_threads,
-            index_path=index_path,
-            reads_path=reads_path,
-            sam_file=sam_file,
-            log_file=log_file
-        )
+        if bt2:
+            map_cmd = '{bowtie_path} -x {index_path} -U {reads_path} -S {sam_file} -k 1 -p {n_threads} --no-unal 2>{log_file}'.format(
+                bowtie_path=bowtie_path,
+                index_path=index_path,
+                reads_path=reads_path,
+                sam_file=sam_file,
+                n_threads=n_threads,
+                log_file=log_file
+            )
+        else:
+            map_cmd = '{bowtie_path} {key} -S -t -v 3 -k 1 --threads {n_threads} {index_path} {reads_path} {sam_file} 2>{log_file}'.format(
+                bowtie_path=bowtie_path,
+                key=key,
+                n_threads=n_threads,
+                index_path=index_path,
+                reads_path=reads_path,
+                sam_file=sam_file,
+                log_file=log_file
+            )
         os.system(map_cmd)
 
         sys.stdout.write('Processing .sam file ... \n')
